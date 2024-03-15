@@ -2,7 +2,7 @@
 
 This risk refers to the risk of false-positive matches when identifying people based on their given name, family name and their birthday. 
 
-> I.e., how likely is it that there's some other Oliver Lavers out there who shares my birthday, and whose identity could be incorrectly merged with mine if that's the only evidence we use to determine identity?
+> I.e., how likely is it that there's some other `Oliver Lavers` out there who shares my birthday, and whose identity could be incorrectly merged with mine if that's the only evidence we use to determine identity?
 
 There are a few ways to measure this risk. Each of them will give slightly different answers because each is based on slightly different assumptions. We'll look at one scenario which is quite generalised, and hopefully helps us build a reliable intuition around the risks.
 
@@ -59,32 +59,27 @@ We are going to perform a statistical trick. We are now going to try and **dispr
 Here's how this works. 
 
 - There are a finite number of birthdays available in the last ~100 years.
-- Birthdays are pretty much randomly assigned.
+- Your birthday within the year you are born is pretty much randomly assigned.
 
-That means that we can pick the top 10 names in our data, look at the number of people with each name, and then calculate the odds that each of them randomly happened to have a different birthday. 
+That means that for each birth year in our data, we can collect all the full names from that year, count the number of different birth**days** associated with that name, and imagine that each combination of name+birthday belongs to one person. Then we can ask ourselves, "given this number of people, what are the odds that they will each randomly have a unique birthday?"
+
+Effectively, we are asking, "What are the odds that we were correct when we imagined that each name+birthday belongs to a single person?"
 
 They might **not** have all had different birthdays. There might be two people in our data who share the same name and the same birthday - a collision. That would be hard to prove. But if we can prove that it's **unlikely** that we ended up with a scenario where there are no collisions, then that's proof that it's quite **likely** we have at least one collision!
 
+> **Question:** Why are we calculating by year? Why not just calculate an overall value?
+>
+> **Answer:** We could! And in fact, we get pretty much the same answer. But remember that birthday curve from earlier? We know that a lot more people in our data are born in 1989 than are born in 1929. Calculating an overall value would assign equal probability to a collision in every year. By calculating the probability of a collision in each year, we get a more accurate answer, and then if we need to we can combine the yearly risk into an accurate overall risk calculation.
+
 ### Ok Let's Do It
 
-Here are our top ten names, and their counts:
+![An area chart depicting yearly risk of a name+birthday collision from 1920-2006.](./img/risk_curve.png)
+> **Fig 4.1:** An area chart depicting yearly risk of a name+birthday collision from 1920-2006. 
 
-| Name           | Count |
-| -------------- | ----- |
-| manpreet kaur  | 108   |
-| amandeep kaur  | 83    |
-| harpreet singh | 77    |
-| harpreet kaur  | 75    |
-| gurpreet singh | 74    |
-| sandeep kaur   | 70    |
-| manpreet singh | 69    |
-| ramandeep kaur | 61    |
-| mandeep kaur   | 57    |
-| jaspreet kaur  | 55    |
+Yikes. People born in the late 80's/early 90's have over an 80% chance of including at least one collision. That's too high.
 
-> Sharp-eyed members of the audience may be looking at this list and drawing some demographic conclusions. But wait! This is definitely good evidence that we have a lot of students of South Asian descent, but remember what we said earlier about cultural fingerprints! 
-> 
-> Some of you may be aware that Singh and Kaur are Sikh last names (Singh for men, and Kaur for women). These names take the place of western-style "family" names, but are near-universal. Almost all Sikh men carry the last name Singh, and almost all Sikh women carry the last name Kaur. No wonder we see more commonality in these names!  
+If we calculate the overall odds by combining the probability from each year, we get a number so close to 100% that it makes little difference. Basically, we can be certain that we have at least one pair of individuals in our records who share a name and birthday.
 
-There are 32850 possible birthdays between 01/01/1920 and 31/12/2000. Let's calculate the odds that none of these people share a birthday!
+How many such pairs to we have?
 
+Hard to say, but odds of there being 10 or more such pairs are over 66%! And of course, every time a new student joins the university, we roll the dice again.
